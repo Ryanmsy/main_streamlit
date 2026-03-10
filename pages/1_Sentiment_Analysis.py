@@ -1,8 +1,9 @@
 import sys
 import os
+from pathlib import Path
 
-# Add the sentiment app folder to the path so its local imports resolve
-SENTIMENT_APP_DIR = r"C:\Users\ryanm\Documents\coding_projects\sentiment_svm_transformer\app"
+# Add the sentiment folder (inside this repo) to the path
+SENTIMENT_APP_DIR = str(Path(__file__).resolve().parent.parent / "sentiment")
 if SENTIMENT_APP_DIR not in sys.path:
     sys.path.insert(0, SENTIMENT_APP_DIR)
 

@@ -1,14 +1,7 @@
-import sys
-
-# Add the Beginner_Agent folder to the path so we can import main_streamlit
-AGENT_DIR = r"C:\Users\ryanm\OneDrive\Documents\coding_projects\AI_Agents\Beginner_Agent"
-if AGENT_DIR not in sys.path:
-    sys.path.insert(0, AGENT_DIR)
-
 import streamlit as st
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from main_streamlit import app, sous_chef_prompt
+from sous_chef.agent import app, sous_chef_prompt
 
 # --- UI ---
 st.title("Sous Chef Agent")
