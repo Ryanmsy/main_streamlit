@@ -29,13 +29,16 @@ if st.button("Find Recipes", type="primary", use_container_width=True):
     if not user_input:
         st.warning("Please describe your ingredients first.")
     else:
-        with st.spinner("The chef is thinking..."):
-            final_state = load_app().invoke({
-                "messages": [
-                    SystemMessage(content=sous_chef_prompt),
-                    HumanMessage(content=user_input),
-                ]
-            })
-        st.divider()
-        st.subheader("Sous Chef says:")
-        st.write(final_state["messages"][-1].content)
+        try:
+            with st.spinner("The chef is thinking..."):
+                final_state = load_app().invoke({
+                    "messages": [
+                        SystemMessage(content=sous_chef_prompt),
+                        HumanMessage(content=user_input),
+                    ]
+                })
+            st.divider()
+            st.subheader("Sous Chef says:")
+            st.write(final_state["messages"][-1].content)
+        except ValueError as e:
+            st.error(str(e))

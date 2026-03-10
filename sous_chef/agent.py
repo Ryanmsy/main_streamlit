@@ -62,7 +62,10 @@ tools = [search_by_ingredients]
 tool_node = ToolNode(tools)
 
 def _build_app():
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise ValueError("GOOGLE_API_KEY is not set. Add it to Streamlit Cloud secrets.")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
     llm_with_tools = llm.bind_tools(tools)
 
     def agent_node(state: AgentState):
