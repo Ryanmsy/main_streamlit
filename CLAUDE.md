@@ -1,0 +1,1 @@
+This is a Streamlit multi-page application that each section is pulling from different folders. 
