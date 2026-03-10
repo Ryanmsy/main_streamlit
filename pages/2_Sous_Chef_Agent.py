@@ -1,7 +1,11 @@
 import streamlit as st
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from sous_chef.agent import app, sous_chef_prompt
+from sous_chef.agent import get_app, sous_chef_prompt
+
+@st.cache_resource
+def load_app():
+    return get_app()
 
 # --- UI ---
 st.title("Sous Chef Agent")
@@ -26,7 +30,7 @@ if st.button("Find Recipes", type="primary", use_container_width=True):
         st.warning("Please describe your ingredients first.")
     else:
         with st.spinner("The chef is thinking..."):
-            final_state = app.invoke({
+            final_state = load_app().invoke({
                 "messages": [
                     SystemMessage(content=sous_chef_prompt),
                     HumanMessage(content=user_input),

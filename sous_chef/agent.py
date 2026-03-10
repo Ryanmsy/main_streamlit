@@ -13,10 +13,7 @@ from dotenv import load_dotenv
 import requests
 import os
 
-# Load .env from this file's directory, regardless of where Streamlit is launched from
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
-
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
 class AgentState(TypedDict):
     messages: Annotated[List, add_messages]
@@ -62,25 +59,27 @@ def search_by_ingredients(ingredients: list[str]) -> str:
         return f"Error fetching recipes: {e}"
 
 tools = [search_by_ingredients]
-llm_with_tools = llm.bind_tools(tools)
 tool_node = ToolNode(tools)
 
-def agent_node(state: AgentState):
-    messages = state["messages"]
-    response = llm_with_tools.invoke(messages)
-    return {"messages": [response]}
+def _build_app():
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+    llm_with_tools = llm.bind_tools(tools)
 
-def should_continue(state: AgentState) -> Literal["tools", END]:
-    last_message = state["messages"][-1]
-    if last_message.tool_calls:
-        return "tools"
-    return END
+    def agent_node(state: AgentState):
+        return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
-workflow = StateGraph(AgentState)
-workflow.add_node("agent", agent_node)
-workflow.add_node("tools", tool_node)
-workflow.set_entry_point("agent")
-workflow.add_conditional_edges("agent", should_continue)
-workflow.add_edge("tools", "agent")
+    def should_continue(state: AgentState) -> Literal["tools", END]:
+        if state["messages"][-1].tool_calls:
+            return "tools"
+        return END
 
-app = workflow.compile()
+    workflow = StateGraph(AgentState)
+    workflow.add_node("agent", agent_node)
+    workflow.add_node("tools", tool_node)
+    workflow.set_entry_point("agent")
+    workflow.add_conditional_edges("agent", should_continue)
+    workflow.add_edge("tools", "agent")
+    return workflow.compile()
+
+def get_app():
+    return _build_app()
