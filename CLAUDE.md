@@ -1,1 +1,9 @@
-This is a Streamlit multi-page application that each section is pulling from different folders. 
+##Project Purpose: 
+This is a streamlit app that is deployed in the cloud. It uses the Sentiment ANalysis and AI agent folder. 
+
+##Architecture
+
+##secrets
+
+##key constrants
+Use UV instead of pip install
